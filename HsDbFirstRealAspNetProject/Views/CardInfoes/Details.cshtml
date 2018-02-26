@@ -1,0 +1,66 @@
+﻿@model HsDbFirstRealAspNetProject.Models.DbModel.CardInfo
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CardInfo</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CardId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CardId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DbId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DbId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Class)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Class)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CardSet)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CardSet)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Img)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Img)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.CardInfoId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

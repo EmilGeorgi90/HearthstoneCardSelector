@@ -1,4 +1,5 @@
-﻿using HsDbFirstRealAspNetProject.Models;
+﻿using HsDbFirstRealAspNetProject.Data;
+using HsDbFirstRealAspNetProject.Models;
 using HsDbFirstRealAspNetProject.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace HsDbFirstRealAspNetProject
 {
@@ -30,6 +33,12 @@ namespace HsDbFirstRealAspNetProject
 
             services.AddDbContext<HsDbFirstRealAspNetProjectContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("HsDbFirstRealAspNetProjectContext")));
+            services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDirectoryBrowser();
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
         }
 
@@ -38,6 +47,24 @@ namespace HsDbFirstRealAspNetProject
         {
             if (env.IsDevelopment())
             {
+                app.UseStaticFiles(); // For the wwwroot folder
+                app.UseBrowserLink();
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
+                    RequestPath = "/MyImages"
+                });
+
+                app.UseDirectoryBrowser(new DirectoryBrowserOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
+                    RequestPath = "/MyImages"
+                });
+
                 app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
@@ -55,7 +82,7 @@ namespace HsDbFirstRealAspNetProject
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=home}/{action=Index}/{id?}");
+                    template: "{controller=CardInfoes}/{action=Index}/{id?}");
             });
         }
     }

@@ -1,0 +1,69 @@
+﻿@model HsDbFirstRealAspNetProject.Models.DbModel.CardInfo
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>CardInfo</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CardId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CardId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DbId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DbId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Class)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Class)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CardSet)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CardSet)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Img)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Img)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="CardInfoId" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

@@ -1,0 +1,67 @@
+﻿@model PaginatedList<HsDbFirstRealAspNetProject.Models.DbModel.CardInfo>
+
+@{
+    ViewData["Title"] = "Index";
+
+}
+<h2>Index</h2>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+        <p>
+            Find: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CardSetParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Card Set</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<div>
+    @foreach (var item in Model)
+    {
+        @if (item.Img != null)
+        {
+
+            <img class="@item.Name" src="~/images/@item.Img" onerror="this.style.display='none'" alt="hsPric" />
+
+        }
+    }
+</div>
+<div>
+
+
+    @{
+        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    }
+
+    <a asp-action="Index"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-page="@(Model.PageIndex - 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-default @prevDisabled">
+        Previous
+    </a>
+    <a asp-action="Index"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-page="@(Model.PageIndex + 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-default @nextDisabled">
+        Next
+    </a>
+
+</div>

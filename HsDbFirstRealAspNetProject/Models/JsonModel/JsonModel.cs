@@ -10,6 +10,7 @@ namespace Hearthstone
     using System.Net;
     using System.Collections.Generic;
     using Newtonsoft.Json;
+    using HsDbFirstRealAspNetProject.Models.DbModel;
 
     public partial class Hs
     {
@@ -149,6 +150,34 @@ namespace Hearthstone
 
         [JsonProperty("armor")]
         public string Armor { get; set; }
+        public static implicit operator CardInfo(Basic basic)
+        {
+            AdditionCardInfo ad = new AdditionCardInfo
+            {
+                Artist = basic.Artist,
+            };
+            if (basic.Collectible != null)
+            {
+                ad.Collectible = (bool)basic.Collectible;
+            }
+            if(basic.Cost != null)
+            {
+                ad.Cost = (long)basic.Cost;
+            }
+            return new CardInfo
+            {
+                CardId = basic.CardId,
+                DbId = basic.DbfId,
+                CardSet = basic.CardSet,
+                Class = basic.PlayerClass,
+                Img = basic.Img,
+                Mechanic = basic.Mechanics,
+                Name = basic.Name,
+                Text = basic.Text,
+                Type = basic.Type,
+                AdditionCard = ad,
+            };
+        }
     }
 
     public partial class Mechanic
@@ -156,6 +185,11 @@ namespace Hearthstone
         public int Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
+    }
+    public partial class Classes
+    {
+        public int Id { get; set; }
+        public string Class { get; set; }
     }
 
     public partial class Hs

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using HsDbFirstRealAspNetProject.Models;
 using System.Reflection;
+using HsDbFirstRealAspNetProject.Models.DbModel;
+using Hearthstone;
 
 namespace HsDbFirstRealAspNetProject.Controllers
 {

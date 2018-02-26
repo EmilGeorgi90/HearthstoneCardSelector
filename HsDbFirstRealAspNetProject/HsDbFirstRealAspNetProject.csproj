@@ -5,6 +5,13 @@
     <UserSecretsId>aspnet-HsDbFirstRealAspNetProject-8625DAA2-214D-4B99-8B02-2ED12DD588E5</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Include="Controllers\AccountController.cs" />
+    <Content Include="Controllers\CardInfoesController.cs" />
+    <Content Include="Controllers\HomeController.cs" />
+    <Content Include="Controllers\ManageController.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
@@ -43,6 +50,21 @@
     <Reference Include="unirest-net">
       <HintPath>..\..\unirest-net\unirest-net\unirest-net (portable)\bin\Debug\unirest-net.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
