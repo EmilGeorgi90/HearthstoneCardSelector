@@ -39,6 +39,10 @@ namespace HsDbFirstRealAspNetProject
             services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Create", policy => policy.RequireRole("administrator"));
+            }); 
 
         }
 

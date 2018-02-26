@@ -11,6 +11,7 @@ using System.Reflection;
 using unirest_net.http;
 using System.Net;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HsDbFirstRealAspNetProject.Controllers
 {
@@ -94,6 +95,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "Create")]
         public async Task<IActionResult> Create([Bind("CardInfoId,CardId,DbId,Name,Type,Text,Class,CardSet,Img")] CardInfo cardInfo)
         {
             HttpResponse<Hearthstone.Hs> response = Unirest.get("https://omgvamp-hearthstone-v1.p.mashape.com/cards")
