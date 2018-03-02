@@ -20,13 +20,13 @@ namespace HsDbFirstRealAspNetProject.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
         public AccountController(
-            UserManager<ApplicationUser> userManager,
+            Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
@@ -42,11 +42,10 @@ namespace HsDbFirstRealAspNetProject.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl = null)
+        public async Task<IActionResult>  Login(string returnUrl = null)
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -225,7 +224,8 @@ namespace HsDbFirstRealAspNetProject.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
+                    var currentUser = await _userManager.FindByNameAsync(user.UserName);
+                    var rolesResult = await _userManager.AddToRoleAsync(currentUser, "Admin");
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
@@ -439,7 +439,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
 
         #region Helpers
 
-        private void AddErrors(IdentityResult result)
+        private void AddErrors(Microsoft.AspNetCore.Identity.IdentityResult result)
         {
             foreach (var error in result.Errors)
             {
@@ -455,7 +455,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction(nameof(CardInfoesController.Index), "CardInfoes");
             }
         }
 

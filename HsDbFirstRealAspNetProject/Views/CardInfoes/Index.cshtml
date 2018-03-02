@@ -8,12 +8,8 @@
 <form asp-action="Index" method="get">
     <div class="form-actions no-color">
         <p>
-            Find: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
-            <input type="submit" value="Search" class="btn btn-default" /> |
-            <a asp-action="Index">Back to Full List</a>
-        </p>
-        <p>
-            Find: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            Find: <input type="text" name="currentFilter" value="@ViewData["currentFilter"]" />
+            Cards pr. page <input type="text" name="parPage" value="@ViewData["parPage"]" />
             <input type="submit" value="Search" class="btn btn-default" /> |
             <a asp-action="Index">Back to Full List</a>
         </p>
@@ -23,7 +19,7 @@
     <thead>
         <tr>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["CardSetParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Card Set</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CardSetParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-parPage="@ViewData["parPage"]">Card Set</a>
             </th>
             <th></th>
         </tr>
@@ -48,20 +44,144 @@
         var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
         var nextDisabled = !Model.HasNextPage ? "disabled" : "";
     }
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @{
+                if (Model.PageIndex > 3)
+                {
+                    <li class="page-item">
+                        <a asp-action="Index"
+                           asp-route-sortOrder="@ViewData["CurrentSort"]"
+                           asp-route-page="@(1)"
+                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                           asp-route-parPage="@ViewData["parPage"]"
+                           class="page-link">
+                            1
+                        </a>
+                    </li>
+                }
+                int number = 10 + Model.PageIndex;
+                int plusNumber = Model.PageIndex - 10;
 
-    <a asp-action="Index"
-       asp-route-sortOrder="@ViewData["CurrentSort"]"
-       asp-route-page="@(Model.PageIndex - 1)"
-       asp-route-currentFilter="@ViewData["CurrentFilter"]"
-       class="btn btn-default @prevDisabled">
-        Previous
-    </a>
-    <a asp-action="Index"
-       asp-route-sortOrder="@ViewData["CurrentSort"]"
-       asp-route-page="@(Model.PageIndex + 1)"
-       asp-route-currentFilter="@ViewData["CurrentFilter"]"
-       class="btn btn-default @nextDisabled">
-        Next
-    </a>
+                for (int i = Model.PageIndex; i < Model.PageIndex + 5; i++)
+                {
+                    if (plusNumber >= 10)
+                    {
+                        <li class="page-item">
+                            <a asp-action="Index"
+                               asp-route-sortOrder="@ViewData["CurrentSort"]"
+                               asp-route-page="@(plusNumber)"
+                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                               asp-route-parPage="@ViewData["parPage"]"
+                               class="page-link">
+                                @{
+                                    int pageNumber = plusNumber;
+                                }
+                                @pageNumber
+                            </a>
+                        </li>
+                        plusNumber += Model.PageIndex - plusNumber - 20;
+                    }
+                }
+                for (int i = Model.PageIndex; i < Model.PageIndex + 5; i++)
+                {
+                    if (Model.HasPreviousPage)
+                    {
+                        if (i - 2 <= 0 || Model.PageIndex == 2)
+                        {
+                            if (i - 1 < Model.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a asp-action="Index"
+                                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                       asp-route-page="@(i-1)"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                       asp-route-parPage="@ViewData["parPage"]"
+                                       class="page-link">
+                                        @{
+                                            int pageNumber = i - 1;
+                                        }
+                                        @pageNumber
+                                    </a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            if (i - 2 < Model.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a asp-action="Index"
+                                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                       asp-route-page="@(i-2)"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                       asp-route-parPage="@ViewData["parPage"]"
+                                       class="page-link">
+                                        @{
+                                            int pageNumber = i - 2;
+                                        }
+                                        @pageNumber
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
 
+                    else if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a asp-action="Index"
+                               asp-route-sortOrder="@ViewData["CurrentSort"]"
+                               asp-route-page="@(i)"
+                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                               asp-route-parPage="@ViewData["parPage"]"
+                               class="page-link">
+                                @i
+                            </a>
+                        </li>
+                    }
+                }
+                for (int i = Model.PageIndex; i < Model.PageIndex + 5; i++)
+                {
+                    if (number <= Model.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a asp-action="Index"
+                               asp-route-sortOrder="@ViewData["CurrentSort"]"
+                               asp-route-page="@(number)"
+                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                               asp-route-parPage="@ViewData["parPage"]"
+                               class="page-link">
+                                @{
+                                    int pageNumber = number;
+                                }
+                                @pageNumber
+                            </a>
+                        </li>
+                        number += 10;
+                    }
+                }
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-page="@(Model.TotalPages)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       asp-route-parPage="@ViewData["parPage"]"
+                       class="page-link">
+                        @Model.TotalPages
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-page="@(Model.PageIndex + 1)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       asp-route-parPage="@ViewData["parPage"]"
+                       class="btn btn-default @nextDisabled">
+                        Next
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
 </div>

@@ -34,7 +34,8 @@ namespace HsDbFirstRealAspNetProject.Controllers
         {
             ViewData["CurrentSort"] = sortOrder;
             ViewData["CardSetParm"] = string.IsNullOrEmpty(sortOrder) ? "CardSet_desc" : "";
-            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentFilter"] = currentFilter;
+            ViewData["parPage"] = parPage;
             if (searchString != null)
             {
                 page = 1;
@@ -43,11 +44,13 @@ namespace HsDbFirstRealAspNetProject.Controllers
             {
                 searchString = currentFilter;
             }
-            var card = from c in _context.CardInfo.Distinct() select c;
+            var card = from c in _context.CardInfo select c;
+            var queryable = from c in _context.CardInfo select c;
+            card = card.Select(c => c).Distinct();
             card = card.OrderBy(c => c.AdditionCard.Cost);
             if (!string.IsNullOrEmpty(searchString))
             {
-                card = card.Where(c => c.Name.Contains(searchString) || c.Type.Contains(searchString) || c.Class.Contains(searchString));
+                card = card.Where(c => c.Name.Contains(searchString) || c.Class.Contains(searchString)).Distinct().OrderBy(c => c.AdditionCard.Cost);
             }
             switch (sortOrder)
             {
@@ -58,9 +61,9 @@ namespace HsDbFirstRealAspNetProject.Controllers
                     card = card.OrderBy(c => c.Class);
                     break;
             }
-            if(parPage == null || parPage == 0)
+            if (parPage == null || parPage == 0)
             {
-                parPage = 20;
+                parPage = 15;
             }
             return View(await PaginatedList<CardInfo>.CreateAsync(card.AsNoTracking(), page ?? 1, (int)parPage));
         }
@@ -86,8 +89,14 @@ namespace HsDbFirstRealAspNetProject.Controllers
         // GET: CardInfoes/Create
         public IActionResult Create()
         {
-
-            return View();
+            if (User.IsInRole("Admin"))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: CardInfoes/Create
@@ -95,46 +104,52 @@ namespace HsDbFirstRealAspNetProject.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "Create")]
         public async Task<IActionResult> Create([Bind("CardInfoId,CardId,DbId,Name,Type,Text,Class,CardSet,Img")] CardInfo cardInfo)
         {
-            HttpResponse<Hearthstone.Hs> response = Unirest.get("https://omgvamp-hearthstone-v1.p.mashape.com/cards")
-.header("X-Mashape-Key", "GBUA6L0J0QmshBqbIxIzTmy4Up8tp1r18WOjsnu52LriUEs890")
-.asJson<Hearthstone.Hs>();
-            List<Hearthstone.Hs> hearthstoneCards = new List<Hearthstone.Hs>
+            if (User.IsInRole("Admin"))
+            {
+                HttpResponse<Hearthstone.Hs> response = Unirest.get("https://omgvamp-hearthstone-v1.p.mashape.com/cards")
+        .header("X-Mashape-Key", "GBUA6L0J0QmshBqbIxIzTmy4Up8tp1r18WOjsnu52LriUEs890")
+        .asJson<Hearthstone.Hs>();
+                List<Hearthstone.Hs> hearthstoneCards = new List<Hearthstone.Hs>
             {
                 response.Body
             };
-            PropertyInfo[] property = typeof(Hearthstone.Hs).GetProperties();
-            foreach (PropertyInfo info in property)
-            {
-                if (info.GetValue(response.Body) is List<Hearthstone.Basic> item2)
+                PropertyInfo[] property = typeof(Hearthstone.Hs).GetProperties();
+                foreach (PropertyInfo info in property)
                 {
-                    foreach (Hearthstone.Basic item in item2)
+                    if (info.GetValue(response.Body) is List<Hearthstone.Basic> item2)
                     {
-                        using (WebClient client = new WebClient())
+                        foreach (Hearthstone.Basic item in item2)
                         {
-                            if (item.Img != null)
+                            using (WebClient client = new WebClient())
                             {
-                                try
+                                if (item.Img != null)
                                 {
-                                    var file = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", item.Name + ".png");
-                                    client.DownloadFile(item.Img, file);
-                                    item.Img = item.Name + ".png";
-                                    _context.Add((CardInfo)item);
-                                }
-                                catch (Exception)
-                                {
+                                    try
+                                    {
+                                        var file = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", item.Name + ".png");
+                                        client.DownloadFile(item.Img, file);
+                                        item.Img = item.Name + ".png";
+                                        _context.Add((CardInfo)item);
+                                    }
+                                    catch (Exception)
+                                    {
 
+                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // GET: CardInfoes/Edit/5
