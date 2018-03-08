@@ -1,15 +1,35 @@
 ﻿@model PaginatedList<HsDbFirstRealAspNetProject.Models.DbModel.CardInfo>
-
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = "Index";
-
+    string loggedin = SignInManager.IsSignedIn(User) ? "col-7" : "";
 }
-<h2>Index</h2>
+<h2>index</h2>
 <form asp-action="Index" method="get">
-    <div class="form-actions no-color">
+    <div class="form-actions">
         <p>
             Find: <input type="text" name="currentFilter" value="@ViewData["currentFilter"]" />
-            Cards pr. page <input type="text" name="parPage" value="@ViewData["parPage"]" />
+            <select class="selector" name="CardParPage" id="CardParPage">
+                <option value="20" disabled>select how many cards you want par page</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+            </select>
+            <select class="selector" name="Hero" id="Hero">
+                <option value=""></option>
+                <option value="Warlock">Warlock</option>
+                <option value="Mage">Mage</option>
+                <option value="Priest">Priest</option>
+                <option value="Druid">Druid</option>
+                <option value="Shamen">Shamen</option>
+                <option value="Rouge">Rouge</option>
+                <option value="Warrior">Warrior</option>
+                <option value="Hunter">Hunter</option>
+                <option value="Paladin">Paladin</option>
+                <option value="Neutral">Neutral</option>
+            </select>
             <input type="submit" value="Search" class="btn btn-default" /> |
             <a asp-action="Index">Back to Full List</a>
         </p>
@@ -26,14 +46,23 @@
     </thead>
     <tbody></tbody>
 </table>
-<div>
-    @foreach (var item in Model)
-    {
-        @if (item.Img != null)
+<div class="row container-fluid ">
+    <div id="currentCardHolder" class="d-flex @loggedin justify-content-between flex-wrap">
+        @foreach (var item in Model)
         {
+            @if (item.Img != null)
+            {
+                <img class="@item.Name cards" src="~/images/@item.Img" onclick="AddCard(this)" onerror="this.style.display='none'" alt="hsPric" />
+            }
+        }
+    </div>
+    @{if (SignInManager.IsSignedIn(User))
+        {
+            <form method="get" class="col-5 bg-faded d-flex flex-wrap">
+                <div id="cardHolder" class="cardHolder" style="overflow:hidden">
+                </div>
 
-            <img class="@item.Name" src="~/images/@item.Img" onerror="this.style.display='none'" alt="hsPric" />
-
+            </form>
         }
     }
 </div>
@@ -47,6 +76,16 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             @{
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-page="@(Model.PageIndex - 1)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       asp-route-parPage="@ViewData["parPage"]"
+                       class="btn btn-default @prevDisabled">
+                        prev
+                    </a>
+                </li>
                 if (Model.PageIndex > 3)
                 {
                     <li class="page-item">
@@ -61,27 +100,35 @@
                     </li>
                 }
                 int number = 10 + Model.PageIndex;
+                List<int> listNumber = new List<int>();
                 int plusNumber = Model.PageIndex - 10;
 
                 for (int i = Model.PageIndex; i < Model.PageIndex + 5; i++)
                 {
                     if (plusNumber >= 10)
                     {
-                        <li class="page-item">
-                            <a asp-action="Index"
-                               asp-route-sortOrder="@ViewData["CurrentSort"]"
-                               asp-route-page="@(plusNumber)"
-                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                               asp-route-parPage="@ViewData["parPage"]"
-                               class="page-link">
-                                @{
-                                    int pageNumber = plusNumber;
-                                }
-                                @pageNumber
-                            </a>
-                        </li>
-                        plusNumber += Model.PageIndex - plusNumber - 20;
+                        listNumber.Add(plusNumber);
+                        plusNumber -= 10;
                     }
+                }
+                listNumber.Reverse();
+                foreach (int item in listNumber)
+                {
+
+                    <li class="page-item">
+                        <a asp-action="Index"
+                           asp-route-sortOrder="@ViewData["CurrentSort"]"
+                           asp-route-page="@(item)"
+                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                           asp-route-parPage="@ViewData["parPage"]"
+                           class="page-link">
+                            @{
+                                int pageNumber = item;
+                                @pageNumber
+                            }
+                        </a>
+                    </li>
+
                 }
                 for (int i = Model.PageIndex; i < Model.PageIndex + 5; i++)
                 {
@@ -91,38 +138,79 @@
                         {
                             if (i - 1 < Model.TotalPages)
                             {
-                                <li class="page-item">
-                                    <a asp-action="Index"
-                                       asp-route-sortOrder="@ViewData["CurrentSort"]"
-                                       asp-route-page="@(i-1)"
-                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                                       asp-route-parPage="@ViewData["parPage"]"
-                                       class="page-link">
-                                        @{
-                                            int pageNumber = i - 1;
-                                        }
-                                        @pageNumber
-                                    </a>
-                                </li>
+                                if (i - 1 == Model.PageIndex)
+                                {
+                                    <li class="page-item active">
+
+                                        <a asp-action="Index"
+                                           asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                           asp-route-page="@(i-1)"
+                                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                           asp-route-parPage="@ViewData["parPage"]"
+                                           class="page-link">
+                                            @{
+                                                int pageNumber = i - 1;
+                                            }
+                                            @pageNumber
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item">
+
+                                        <a asp-action="Index"
+                                           asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                           asp-route-page="@(i-1)"
+                                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                           asp-route-parPage="@ViewData["parPage"]"
+                                           class="page-link">
+                                            @{
+                                                int pageNumber = i - 1;
+                                            }
+                                            @pageNumber
+                                        </a>
+                                    </li>
+
+                                }
                             }
                         }
                         else
                         {
                             if (i - 2 < Model.TotalPages)
                             {
-                                <li class="page-item">
-                                    <a asp-action="Index"
-                                       asp-route-sortOrder="@ViewData["CurrentSort"]"
-                                       asp-route-page="@(i-2)"
-                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                                       asp-route-parPage="@ViewData["parPage"]"
-                                       class="page-link">
-                                        @{
-                                            int pageNumber = i - 2;
-                                        }
-                                        @pageNumber
-                                    </a>
-                                </li>
+                                if (i - 2 == Model.PageIndex)
+                                {
+                                    <li class="page-item active">
+                                        <a asp-action="Index"
+                                           asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                           asp-route-page="@(i-2)"
+                                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                           asp-route-parPage="@ViewData["parPage"]"
+                                           class="page-link">
+                                            @{
+                                                int pageNumber = i - 2;
+                                            }
+                                            @pageNumber
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item">
+                                        <a asp-action="Index"
+                                           asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                           asp-route-page="@(i-2)"
+                                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                           asp-route-parPage="@ViewData["parPage"]"
+                                           class="page-link">
+                                            @{
+                                                int pageNumber = i - 2;
+                                            }
+                                            @pageNumber
+                                        </a>
+                                    </li>
+                                }
                             }
                         }
                     }

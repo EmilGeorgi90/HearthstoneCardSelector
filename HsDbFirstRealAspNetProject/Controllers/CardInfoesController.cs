@@ -27,15 +27,20 @@ namespace HsDbFirstRealAspNetProject.Controllers
         // GET: CardInfoes
         public async Task<IActionResult> Index(
             string sortOrder,
+            string Hero,
             string currentFilter,
             string searchString,
             int? page,
+            int? cost,
             int? parPage)
         {
-            ViewData["CurrentSort"] = sortOrder;
+            List<string> hero = new List<string>() { "Malfurion Stormrage", "Rexxar", "Jaina Proudmoore", "Uther Lightbringer", "Anduin Wrynn", "Valeera Sanguinar", "Thrall", "Gul'dan", "Garrosh HellScream" };
+            ViewData["CurrentSort"] = string.IsNullOrEmpty(sortOrder) ? "Sort" : "";
+            ViewData["Cost"] = cost != null ? "cost" : "";
+            ViewData["Hero"] = string.IsNullOrEmpty(Hero) ? "Hero" : "";
             ViewData["CardSetParm"] = string.IsNullOrEmpty(sortOrder) ? "CardSet_desc" : "";
-            ViewData["CurrentFilter"] = currentFilter;
-            ViewData["parPage"] = parPage;
+            ViewData["CurrentFilter"] = string.IsNullOrEmpty(currentFilter) ? currentFilter : "";
+            ViewData["CardParPage"] = parPage != null ? "CardParPage" : "";
             if (searchString != null)
             {
                 page = 1;
@@ -44,13 +49,20 @@ namespace HsDbFirstRealAspNetProject.Controllers
             {
                 searchString = currentFilter;
             }
-            var card = from c in _context.CardInfo select c;
-            var queryable = from c in _context.CardInfo select c;
-            card = card.Select(c => c).Distinct();
-            card = card.OrderBy(c => c.AdditionCard.Cost);
+            var card = from cardinfo in _context.CardInfo select cardinfo;
+            card = _context.CardInfo.OrderBy(c => c.Class).ThenBy(co => co.AdditionCard.Cost);
+            card = card.Where(c => c.AdditionCard != null && c.CardSet != "Tavern Brawl" && c.CardSet != "Missions" && c.CardSet != "Hero Skins" && c.AdditionCard.Collectible == true && !hero.Contains(c.Name));
             if (!string.IsNullOrEmpty(searchString))
             {
                 card = card.Where(c => c.Name.Contains(searchString) || c.Class.Contains(searchString)).Distinct().OrderBy(c => c.AdditionCard.Cost);
+            }
+            if (!string.IsNullOrEmpty(Hero))
+            {
+                card = card.Where(c => c.Class.Contains(Hero));
+            }
+            if (cost != null)
+            {
+                card = card.Where(c => c.AdditionCard.Cost == cost);
             }
             switch (sortOrder)
             {
@@ -58,14 +70,13 @@ namespace HsDbFirstRealAspNetProject.Controllers
                     card = card.OrderByDescending(c => c.CardSet);
                     break;
                 default:
-                    card = card.OrderBy(c => c.Class);
                     break;
             }
             if (parPage == null || parPage == 0)
             {
-                parPage = 15;
+                parPage = 20;
             }
-            return View(await PaginatedList<CardInfo>.CreateAsync(card.AsNoTracking(), page ?? 1, (int)parPage));
+            return View(await PaginatedList<CardInfo>.CreateAsync(card, page ?? 1, (int)parPage));
         }
 
         // GET: CardInfoes/Details/5
