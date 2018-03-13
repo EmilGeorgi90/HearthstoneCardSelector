@@ -27,6 +27,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
         // GET: CardInfoes
         public async Task<IActionResult> Index(
             string sortOrder,
+            List<string> cardNames,
             string Hero,
             string currentFilter,
             string searchString,

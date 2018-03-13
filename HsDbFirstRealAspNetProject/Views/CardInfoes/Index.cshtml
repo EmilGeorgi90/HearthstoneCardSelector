@@ -58,10 +58,10 @@
     </div>
     @{if (SignInManager.IsSignedIn(User))
         {
-            <form method="get" class="col-5 bg-faded d-flex flex-wrap">
-                <div id="cardHolder" class="cardHolder" style="overflow:hidden">
-                </div>
-
+            <div id="cardHolder" class="cardHolder col-5" style="overflow:hidden">
+            </div>
+            <form method="get" class="">
+                <input type="submit" name="submit" value="submit" />
             </form>
         }
     }

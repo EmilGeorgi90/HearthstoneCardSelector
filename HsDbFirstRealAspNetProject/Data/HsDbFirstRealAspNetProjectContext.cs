@@ -21,6 +21,8 @@ namespace HsDbFirstRealAspNetProject.Models
         public DbSet<Minion> Minion { get; set; }
         public DbSet<Spell> Spell { get; set; }
         public DbSet<AdditionCardInfo> AdditionCardInfo { get; set; }
+        public DbSet<Deck> Deck { get; set; }
+        public DbSet<DeckVsCards> DeckVsCard { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CardInfo>().ToTable("CardInfo");
@@ -30,6 +32,8 @@ namespace HsDbFirstRealAspNetProject.Models
             modelBuilder.Entity<Spell>().ToTable("Spell");
             modelBuilder.Entity<Mechanic>().ToTable("Mechanic");
             modelBuilder.Entity<MinionsVsMechanic>().ToTable("MinionsVsMechanics");
+            modelBuilder.Entity<Deck>().ToTable("Deck");
+            modelBuilder.Entity<DeckVsCards>().ToTable("DeckVsCards");
         }
     }
 }
