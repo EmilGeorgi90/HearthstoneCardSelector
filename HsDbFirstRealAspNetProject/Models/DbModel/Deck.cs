@@ -8,7 +8,5 @@ namespace HsDbFirstRealAspNetProject.Models.DbModel
     public class Deck
     {
         public int DeckId { get; set; }
-        public List<CardInfo> Cards { get; set; }
-
     }
 }

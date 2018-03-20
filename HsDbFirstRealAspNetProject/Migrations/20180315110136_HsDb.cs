@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace HsDbFirstRealAspNetProject.Migrations
 {
-    public partial class Inheritance : Migration
+    public partial class HsDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,30 +25,15 @@ namespace HsDbFirstRealAspNetProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CardInfo",
+                name: "Deck",
                 columns: table => new
                 {
-                    CardInfoId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    AdditionCardInfoId = table.Column<int>(nullable: true),
-                    CardId = table.Column<string>(nullable: true),
-                    CardSet = table.Column<string>(nullable: true),
-                    Class = table.Column<string>(nullable: true),
-                    DbId = table.Column<string>(nullable: true),
-                    Img = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
-                    Text = table.Column<string>(nullable: true),
-                    Type = table.Column<string>(nullable: true)
+                    DeckId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CardInfo", x => x.CardInfoId);
-                    table.ForeignKey(
-                        name: "FK_CardInfo_additionalCardInfo_AdditionCardInfoId",
-                        column: x => x.AdditionCardInfoId,
-                        principalTable: "additionalCardInfo",
-                        principalColumn: "AdditionCardInfoId",
-                        onDelete: ReferentialAction.Restrict);
+                    table.PrimaryKey("PK_Deck", x => x.DeckId);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,6 +99,66 @@ namespace HsDbFirstRealAspNetProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CardInfo",
+                columns: table => new
+                {
+                    CardInfoId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    AdditionCardInfoId = table.Column<int>(nullable: true),
+                    CardId = table.Column<string>(nullable: true),
+                    CardSet = table.Column<string>(nullable: true),
+                    Class = table.Column<string>(nullable: true),
+                    DbId = table.Column<string>(nullable: true),
+                    DeckId = table.Column<int>(nullable: true),
+                    Img = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Text = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CardInfo", x => x.CardInfoId);
+                    table.ForeignKey(
+                        name: "FK_CardInfo_additionalCardInfo_AdditionCardInfoId",
+                        column: x => x.AdditionCardInfoId,
+                        principalTable: "additionalCardInfo",
+                        principalColumn: "AdditionCardInfoId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CardInfo_Deck_DeckId",
+                        column: x => x.DeckId,
+                        principalTable: "Deck",
+                        principalColumn: "DeckId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeckVsCards",
+                columns: table => new
+                {
+                    DeckVsCardsId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CardInfoId = table.Column<int>(nullable: true),
+                    DeckId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeckVsCards", x => x.DeckVsCardsId);
+                    table.ForeignKey(
+                        name: "FK_DeckVsCards_CardInfo_CardInfoId",
+                        column: x => x.CardInfoId,
+                        principalTable: "CardInfo",
+                        principalColumn: "CardInfoId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DeckVsCards_Deck_DeckId",
+                        column: x => x.DeckId,
+                        principalTable: "Deck",
+                        principalColumn: "DeckId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Mechanic",
                 columns: table => new
                 {
@@ -165,6 +210,21 @@ namespace HsDbFirstRealAspNetProject.Migrations
                 column: "AdditionCardInfoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CardInfo_DeckId",
+                table: "CardInfo",
+                column: "DeckId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeckVsCards_CardInfoId",
+                table: "DeckVsCards",
+                column: "CardInfoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeckVsCards_DeckId",
+                table: "DeckVsCards",
+                column: "DeckId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Hero_CardInfoAdditionCardInfoId",
                 table: "Hero",
                 column: "CardInfoAdditionCardInfoId");
@@ -198,6 +258,9 @@ namespace HsDbFirstRealAspNetProject.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "DeckVsCards");
+
+            migrationBuilder.DropTable(
                 name: "Hero");
 
             migrationBuilder.DropTable(
@@ -217,6 +280,9 @@ namespace HsDbFirstRealAspNetProject.Migrations
 
             migrationBuilder.DropTable(
                 name: "additionalCardInfo");
+
+            migrationBuilder.DropTable(
+                name: "Deck");
         }
     }
 }

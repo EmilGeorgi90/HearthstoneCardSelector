@@ -88,10 +88,46 @@ function AddCard(inp) {
             }
         }
         else {
-            alert("you can only have 2 of each card in your deck and you deck can only have 30 cards");
+            alert("you can only have 2 of each card in your deck and your deck can only have 30 cards");
         }
     }
 }
+
+function HeroSelector(Hero) {
+    $(document).ready(function () {
+        let result = null;
+        let scriptUrl = "Decks?Hero=" + Hero;
+        $.ajax({
+            url: scriptUrl,
+            type: "get",
+            dataType: 'html',
+            async: false,
+            success: function (data) {
+                result = data;
+            }
+        });
+        $("html").html(result);
+    });
+}
+function saveDeck() {
+    $(document).ready(function () {
+
+        let result = null;
+        let scriptUrl = "Decks/Create";
+        for (let i = 0; i < $("#cardHolder > .cards").length; i++) {
+            let content = $("#cardHolder > .cards")[i].getAttribute("data-id");
+            console.log(content);
+            $.post({
+                url: scriptUrl,
+                dataType: { CardInfoesId: content },
+                success: function (data) { result = data; }
+            });
+            console.log(content);
+            console.log(result);
+        }
+    });
+}
+
 
 
 

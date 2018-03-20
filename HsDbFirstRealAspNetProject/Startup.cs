@@ -35,17 +35,31 @@ namespace HsDbFirstRealAspNetProject
 
             services.AddMvc();
             string assemblyName = typeof(ApplicationDbContext).Namespace;
-            services.AddDbContext<HsDbFirstRealAspNetProjectContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("HsDbFirstRealAspNetProjectContext"), b => b.MigrationsAssembly(assemblyName)));
+
+            services.AddDbContext<HsDbFirstRealAspNetProjectContext>(
+                options => options.UseSqlServer(
+                    Configuration.GetConnectionString(
+                        "HsDbFirstRealAspNetProjectContext"),
+                        b => b.MigrationsAssembly(assemblyName)
+                    )
+                );
+
+            services.AddDbContext<HsDbContext>(options =>
+        options.UseSqlServer(Configuration.GetConnectionString("HsDbFirstRealAspNetProjectContext"), b => b.MigrationsAssembly(assemblyName)));
+
             services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDirectoryBrowser();
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+                    .AddDefaultTokenProviders();
+
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Create", policy => policy.RequireRole("administrator"));
+                options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("administrator"));
+                options.AddPolicy("RequireUserLogin", policy => { policy.RequireRole("User"); });
             });
 
         }
@@ -92,9 +106,9 @@ namespace HsDbFirstRealAspNetProject
                     name: "default",
                     template: "{controller=CardInfoes}/{action=Index}/{id?}");
             });
-            createRolesandUsers();
+            CreateRolesandUsers();
         }
-        private async void createRolesandUsers()
+        private async void CreateRolesandUsers()
         {
             ApplicationDbContext context = new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>());
             var serviceProvider = new DefaultServiceProviderFactory().CreateServiceProvider(new ServiceCollection());
@@ -135,10 +149,12 @@ namespace HsDbFirstRealAspNetProject
             }
 
             // creating Creating Manager role    
-            if (!await roleManager.RoleExistsAsync("Manager"))
+            if (!await roleManager.RoleExistsAsync("User"))
             {
-                var role = new Microsoft.AspNetCore.Identity.IdentityRole();
-                role.Name = "Manager";
+                var role = new Microsoft.AspNetCore.Identity.IdentityRole
+                {
+                    Name = "Manager"
+                };
                 await roleManager.CreateAsync(role);
 
             }
@@ -146,8 +162,10 @@ namespace HsDbFirstRealAspNetProject
             // creating Creating Employee role    
             if (!await roleManager.RoleExistsAsync("Employee"))
             {
-                var role = new Microsoft.AspNetCore.Identity.IdentityRole();
-                role.Name = "Employee";
+                var role = new Microsoft.AspNetCore.Identity.IdentityRole
+                {
+                    Name = "Employee"
+                };
                 await roleManager.CreateAsync(role);
 
             }

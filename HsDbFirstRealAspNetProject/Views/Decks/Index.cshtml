@@ -2,7 +2,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = "Index";
-    }
+}
 <h2>index</h2>
 <form asp-action="Index" method="get">
     <div class="form-actions">
@@ -46,14 +46,28 @@
     <tbody></tbody>
 </table>
 <div class="row container-fluid ">
-    <div id="currentCardHolder" class="d-flex justify-content-between flex-wrap">
-        @foreach (var item in Model)
-        {
-            @if (item.Img != null)
-            {
-                <img class="@item.Name cards" src="~/images/@item.Img" onclick="AddCard(this)" onerror="this.style.display='none'" alt="hsPric" />
-            }
+    <div id="currentCardHolder" class="d-flex justify-content-between flex-wrap col-7">
+        @{
+            List<string> heroName = new List<string>() { "Malfurion Stormrage", "Rexxar", "Jaina Proudmoore", "Uther Lightbringer", "Anduin Wrynn", "Valeera Sanguinar", "Thrall", "Gul'dan", "Garrosh HellScream" };
+            <form action="Index" method="get">
+                @foreach (var item in Model)
+                {
+                    @if (item.Img != null)
+                    {
+                        if (heroName.Contains(item.Name))
+                        {
+                            <img class="@item.Class" src="~/images/@item.Img" onerror="this.style.display='none'" alt="hsPric" onclick="HeroSelector(this.className)" />
+                        }
+                        else
+                        {
+                            <img class="@item.Name cards" src="~/images/@item.Img" onclick="AddCard(this)" onerror="this.style.display='none'" alt="hsPric" data-Id="@item.CardInfoId" />
+                        }
+                    }
+                }
+            </form>
         }
+    </div>
+    <div id="cardHolder" class="cardHolder col-5">
     </div>
 </div>
 <div>

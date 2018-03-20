@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Hearthstone;
+using HsDbFirstRealAspNetProject.Models;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 using HsDbFirstRealAspNetProject.Models.DbModel;
+using Hearthstone;
 
 namespace HsDbFirstRealAspNetProject.Data
 {
-    public class HsDbFirstRealAspNetProjectContext : DbContext
+    public class HsDbContext : DbContext
     {
-        public HsDbFirstRealAspNetProjectContext(DbContextOptions<HsDbFirstRealAspNetProjectContext> options)
+        public HsDbContext(DbContextOptions<HsDbContext> options)
             : base(options)
         {
         }
@@ -34,6 +38,10 @@ namespace HsDbFirstRealAspNetProject.Data
             modelBuilder.Entity<MinionsVsMechanic>().ToTable("MinionsVsMechanics");
             modelBuilder.Entity<Deck>().ToTable("Deck");
             modelBuilder.Entity<DeckVsCards>().ToTable("DeckVsCards");
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=HsDbFirstRealAspNetProjectContext-4cb26b20-2857-4c47-a236-da7ac3483b29;Integrated Security=True");
         }
     }
 }

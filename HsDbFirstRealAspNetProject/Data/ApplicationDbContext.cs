@@ -26,15 +26,7 @@ namespace HsDbFirstRealAspNetProject.Data
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
-            var builder = new ConfigurationBuilder();
-            builder.SetBasePath(Directory.GetCurrentDirectory());
-            builder.AddJsonFile("appsettings.json");
-            IConfiguration Configuration = builder.Build();
-
-            optionsBuilder.UseSqlServer(
-                Configuration.GetConnectionString("DefaultConnection"));
-            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=aspnet-HsDbFirstRealAspNetProject-8625DAA2-214D-4B99-8B02-2ED12DD588E5;Integrated Security=True");
         }
     }
 }
