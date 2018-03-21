@@ -8,12 +8,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
-namespace HsDbFirstRealAspNetProject.Migrations
+namespace HsDbFirstRealAspNetProject.Migrations.HsDbFirstRealAspNetProject
 {
-    [DbContext(typeof(HsDbContext))]
-    partial class HsDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(HsDbFirstRealAspNetProjectContext))]
+    [Migration("20180320105548_Hs")]
+    partial class Hs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

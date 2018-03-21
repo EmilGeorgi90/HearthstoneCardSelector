@@ -59,7 +59,6 @@ namespace HsDbFirstRealAspNetProject
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("administrator"));
-                options.AddPolicy("RequireUserLogin", policy => { policy.RequireRole("User"); });
             });
 
         }
@@ -151,9 +150,9 @@ namespace HsDbFirstRealAspNetProject
             // creating Creating Manager role    
             if (!await roleManager.RoleExistsAsync("User"))
             {
-                var role = new Microsoft.AspNetCore.Identity.IdentityRole
+                var role = new Microsoft.AspNetCore.Identity.IdentityRole("User")
                 {
-                    Name = "Manager"
+                    Name = "User"
                 };
                 await roleManager.CreateAsync(role);
 

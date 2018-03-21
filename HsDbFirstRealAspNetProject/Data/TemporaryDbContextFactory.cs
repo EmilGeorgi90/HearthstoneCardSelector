@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace HsDbFirstRealAspNetProject.Data
 {
-    public class TemporaryDbContextFactory : IDesignTimeDbContextFactory<HsDbContext>
+    public class TemporaryDbContextFactory : IDesignTimeDbContextFactory<HsDbFirstRealAspNetProjectContext>
     {
-        public HsDbContext CreateDbContext(string[] args)
+        public HsDbFirstRealAspNetProjectContext CreateDbContext(string[] args)
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            var builder = new DbContextOptionsBuilder<HsDbContext>();
+            var builder = new DbContextOptionsBuilder<HsDbFirstRealAspNetProjectContext>();
 
             var connectionString = configuration.GetConnectionString("HsDbFirstRealAspNetProjectContext");
             builder.UseSqlServer(connectionString);
@@ -28,7 +28,7 @@ namespace HsDbFirstRealAspNetProject.Data
             builder.ConfigureWarnings(w =>
                 w.Throw(RelationalEventId.QueryClientEvaluationWarning));
 
-            return new HsDbContext(builder.Options);
+            return new HsDbFirstRealAspNetProjectContext(builder.Options);
         }
     }
 }

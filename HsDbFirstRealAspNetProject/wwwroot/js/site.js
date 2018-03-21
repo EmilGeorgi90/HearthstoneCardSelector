@@ -114,16 +114,21 @@ function saveDeck() {
 
         let result = null;
         let scriptUrl = "Decks/Create";
-        for (let i = 0; i < $("#cardHolder > .cards").length; i++) {
-            let content = $("#cardHolder > .cards")[i].getAttribute("data-id");
-            console.log(content);
-            $.post({
-                url: scriptUrl,
-                dataType: { CardInfoesId: content },
-                success: function (data) { result = data; }
-            });
-            console.log(content);
-            console.log(result);
+        if ($("#cardHolder > .cards").length === 30) {
+            for (let i = 0; i < $("#cardHolder > .cards").length; i++) {
+                let content = $("#cardHolder > .cards")[i].getAttribute("data-id");
+                console.log(content);
+                $.post({
+                    url: scriptUrl,
+                    dataType: { CardInfoesId: content },
+                    success: function (data) { result = data; }
+                });
+                console.log(content);
+                console.log(result);
+            }
+        }
+        else {
+            alert("you need 30 cards in your deck");
         }
     });
 }

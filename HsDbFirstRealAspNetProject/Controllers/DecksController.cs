@@ -9,6 +9,7 @@ using HsDbFirstRealAspNetProject.Models;
 using HsDbFirstRealAspNetProject.Models.DbModel;
 using HsDbFirstRealAspNetProject.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace HsDbFirstRealAspNetProject.Controllers
 {
@@ -16,7 +17,6 @@ namespace HsDbFirstRealAspNetProject.Controllers
     public class DecksController : Controller
     {
         private readonly HsDbFirstRealAspNetProjectContext _context;
-
         public DecksController(HsDbFirstRealAspNetProjectContext context)
         {
             _context = context;
@@ -104,7 +104,6 @@ namespace HsDbFirstRealAspNetProject.Controllers
             {
                 DeckVsCards deckVsCards = new DeckVsCards
                 {
-                    Deck = new Deck(),
                     Card = cardInfos
                 };
                 _context.Add(deckVsCards);
@@ -113,6 +112,8 @@ namespace HsDbFirstRealAspNetProject.Controllers
                 return View();
             }
             return View();
+
+
         }
         // GET: Decks/Edit/5
         public async Task<IActionResult> Edit(int? id)

@@ -12,5 +12,6 @@ namespace HsDbFirstRealAspNetProject.Models.DbModel
         public bool Collectible { get; set; }
         public string Artist { get; set; }
         public long Cost { get; set; }
+        public string Rarity { get; set; }
     }
 }

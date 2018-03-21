@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
-namespace HsDbFirstRealAspNetProject.Migrations
+namespace HsDbFirstRealAspNetProject.Migrations.HsDbFirstRealAspNetProject
 {
-    [DbContext(typeof(HsDbContext))]
-    partial class HsDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(HsDbFirstRealAspNetProjectContext))]
+    partial class HsDbFirstRealAspNetProjectContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

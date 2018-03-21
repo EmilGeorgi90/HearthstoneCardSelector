@@ -60,7 +60,7 @@
                         }
                         else
                         {
-                            <img class="@item.Name cards" src="~/images/@item.Img" onclick="AddCard(this)" onerror="this.style.display='none'" alt="hsPric" data-Id="@item.CardInfoId" />
+                            <img class="@item.Name cards" src="~/images/@item.Img" onclick="AddCard(this)" onerror="this.style.display='none'" alt="hsPric" data-Id="@item.CardInfoId" data-rarety="@item.AdditionCard.Rarity" />
                         }
                     }
                 }
@@ -68,6 +68,7 @@
         }
     </div>
     <div id="cardHolder" class="cardHolder col-5">
+        <div class="btn-default col-2" onclick="saveDeck()"></div>
     </div>
 </div>
 <div>

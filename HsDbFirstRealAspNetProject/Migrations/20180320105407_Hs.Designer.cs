@@ -11,9 +11,10 @@ using System;
 namespace HsDbFirstRealAspNetProject.Migrations
 {
     [DbContext(typeof(HsDbContext))]
-    partial class HsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180320105407_Hs")]
+    partial class Hs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
