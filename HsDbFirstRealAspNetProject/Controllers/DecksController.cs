@@ -10,6 +10,8 @@ using HsDbFirstRealAspNetProject.Models.DbModel;
 using HsDbFirstRealAspNetProject.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using System.Net;
+using Microsoft.AspNetCore.Http.Internal;
 
 namespace HsDbFirstRealAspNetProject.Controllers
 {
@@ -40,6 +42,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
             ViewData["CardSetParm"] = string.IsNullOrEmpty(sortOrder) ? "CardSet_desc" : "";
             ViewData["CurrentFilter"] = string.IsNullOrEmpty(currentFilter) ? currentFilter : "";
             ViewData["CardParPage"] = parPage != null ? "CardParPage" : "";
+            string He = null;
             if (searchString != null)
             {
                 page = 1;
@@ -48,26 +51,46 @@ namespace HsDbFirstRealAspNetProject.Controllers
             {
                 searchString = currentFilter;
             }
-            var card = from cardinfo in _context.CardInfo select cardinfo;
-            card = _context.CardInfo.OrderBy(c => c.Class).ThenBy(co => co.AdditionCard.Cost);
-            card = card.Where(c => c.AdditionCard != null && c.CardSet != "Tavern Brawl" && c.CardSet != "Missions" && c.CardSet != "Hero Skins" && c.AdditionCard.Collectible == true);
+            if (Request.Cookies.ContainsKey("hero"))
+            {
+                Response.Cookies.Delete("hero");
+            }
+            var card = from cardinfo in _context.CardInfo.OrderBy(c => c.Class).ThenBy(c => c.AdditionCard.Cost) join ads in _context.AdditionCardInfo on cardinfo.AdditionCard equals ads select new { card = cardinfo, ad = ads };
+            card = card.Where(c => c.card.AdditionCard != null && c.card.CardSet != "Tavern Brawl" && c.card.CardSet != "Missions" && c.card.CardSet != "Hero Skins" && c.card.AdditionCard.Collectible == true);
             if (!string.IsNullOrEmpty(searchString))
             {
-                card = card.Where(c => c.Name.Contains(searchString) || c.Class.Contains(searchString)).Distinct().OrderBy(c => c.AdditionCard.Cost);
+                card = card.Where(c => c.card.Name.Contains(searchString));
             }
             if (parPage == null || parPage == 0)
             {
                 parPage = 20;
             }
-            if (string.IsNullOrEmpty(Hero))
+            if (!string.IsNullOrWhiteSpace(Hero) || Request.Cookies.TryGetValue("hero", out He))
             {
-                card = card.Where(c => hero.Contains(c.Name));
+               
+                if (string.IsNullOrWhiteSpace(He))
+                {
+                    card = card.Where(c => c.card.Class.Contains(Hero) || c.card.Class.Contains("Neutral"));
+                }
+                else
+                {
+                    card = card.Where(c => c.card.Class.Contains(He) || c.card.Class.Contains("Neutral"));
+                }
             }
-            if (!string.IsNullOrWhiteSpace(Hero))
+            else
             {
-                card = card.Where(c => c.Class.Contains(Hero));
+                card = card.Where(c => hero.Contains(c.card.Name));
             }
-            return View(await PaginatedList<CardInfo>.CreateAsync(card, page ?? 1, (int)parPage));
+            var cardArray = card.ToArray();
+
+            List<CardInfo> cardList = new List<CardInfo>();
+            for (int i = 0; i < cardArray.Length; i++)
+            {
+                if (cardArray[i].card.CardInfoId == cardArray[i].ad.AdditionCardInfoId)
+                    cardArray[i].card.AdditionCard = cardArray[i].ad;
+                cardList.Add(cardArray[i].card);
+            }
+            return View(await PaginatedList<CardInfo>.CreateAsync((IQueryable<CardInfo>)cardList.AsQueryable(), page ?? 1, (int)parPage));
         }
 
         // GET: Decks/Details/5
@@ -78,13 +101,12 @@ namespace HsDbFirstRealAspNetProject.Controllers
                 return NotFound();
             }
 
-            var deck = await _context.Deck
-                .SingleOrDefaultAsync(m => m.DeckId == id);
+            var deck = await _context.DeckVsCard
+                .SingleOrDefaultAsync(m => m.DeckVsCardsId == id);
             if (deck == null)
             {
                 return NotFound();
             }
-
             return View(deck);
         }
 
@@ -98,22 +120,28 @@ namespace HsDbFirstRealAspNetProject.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Create(CardInfo cardInfos)
+        public async Task<IActionResult> Create(CardInfo[] cardInfos)
         {
             if (ModelState.IsValid)
             {
-                DeckVsCards deckVsCards = new DeckVsCards
+                DeckVsCards deckVsCards = new DeckVsCards();
+                Deck deck = new Deck();
+                foreach (CardInfo item in cardInfos)
                 {
-                    Card = cardInfos
+                    deckVsCards.Deck = deck;
+                    deckVsCards.Card = item;
+                    _context.Add(deckVsCards);
                 };
-                _context.Add(deckVsCards);
+
                 await _context.SaveChangesAsync();
-                RedirectToAction(nameof(Index));
+                var something = from decks in _context.DeckVsCard select decks;
+                RedirectToAction(nameof(Details), (something.Where(c => c.Deck.DeckId == deckVsCards.Deck.DeckId).Single().DeckVsCardsId));
                 return View();
             }
-            return View();
-
-
+            else
+            {
+                return View();
+            }
         }
         // GET: Decks/Edit/5
         public async Task<IActionResult> Edit(int? id)

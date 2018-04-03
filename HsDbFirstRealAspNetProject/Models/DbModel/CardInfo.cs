@@ -31,7 +31,7 @@ namespace HsDbFirstRealAspNetProject.Models.DbModel
                 Text = cardInfo.Text,
                 PlayerClass = cardInfo.Class,
                 CardSet = cardInfo.CardSet,
-                Img = cardInfo.Img
+                Img = cardInfo.Img,
             };
             return basic;
         }

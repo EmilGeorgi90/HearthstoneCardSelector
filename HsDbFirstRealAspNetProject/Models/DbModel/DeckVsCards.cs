@@ -10,5 +10,6 @@ namespace HsDbFirstRealAspNetProject.Models.DbModel
         public int DeckVsCardsId { get; set; }
         public Deck Deck { get; set; }
         public CardInfo Card { get; set; }
+        public int LoginId { get; set; }
     }
 }

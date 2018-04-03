@@ -21,10 +21,25 @@ var deckHandler = {
     },
     deck: []
 };
+console.log(chrome.windows, chrome.tabs);
+chrome.windows.getAll({ populate: true }, getAllOpenWindows);
+function getAllOpenWindows(winData) {
+    var tabs = [];
+    for (var i in winData) {
+        if (winData[i].focused === true) {
+            var winTabs = winData[i].tabs;
+            var totTabs = winTabs.length;
+            for (var j = 0; j < totTabs; j++) {
+                tabs.push(winTabs[j].url);
+            }
+        }
+    }
+    console.log(tabs);
+}
+
 var card = [];
 var counter = 0;
 deckHandler.deck = document.getElementById("cardHolder");
-console.log(document.cookie);
 for (var i = 0; i < localStorage.length; i++) {
     if (localStorage.getItem(localStorage.key(i)).split("1") !== undefined) {
         AddCard(document.getElementsByClassName(localStorage.getItem(localStorage.key(i)).split("1", 1)[0]).item(0).cloneNode(true));
@@ -48,6 +63,11 @@ function cardClassHanldere(age) {
         for (var currcard of tempcard) {
             if (currcard === age.className.split(" ", 1)[0]) {
                 counter++;
+                if (age.dataset.rarety.toLowerCase() === "legendary") {
+                    if (counter >= 1) {
+                        return false;
+                    }
+                }
                 if (counter >= 2) {
                     return false;
                 }
@@ -56,16 +76,16 @@ function cardClassHanldere(age) {
     }
     return true;
 }
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-}
+//function getCookie(name) {
+//    var nameEQ = name + "=";
+//    var ca = document.cookie.split(';');
+//    for (var i = 0; i < ca.length; i++) {
+//        var c = ca[i];
+//        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+//        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+//    }
+//    return null;
+//}
 function AddCard(inp) {
     if ($(inp).parent("#cardHolder").hasClass("cardHolder")) {
         inp.remove();
@@ -81,7 +101,6 @@ function AddCard(inp) {
             deckHandler.addCard = inp.cloneNode(true);
             ages = deckHandler.allCards.cards;
             if (localStorage.getItem(inp.className.split("cards", 1)[0]) !== null) {
-                console.log(localStorage.getItem(inp.className.split("cards", 1)[0]));
                 localStorage.setItem(inp.className.split("cards", 1)[0] + "1", inp.className.split("cards", 1)[0]);
             } else {
                 localStorage.setItem(inp.className.split("cards", 1)[0], inp.className.split("cards", 1)[0]);
@@ -99,6 +118,7 @@ function HeroSelector(Hero) {
         let scriptUrl = "Decks?Hero=" + Hero;
         $.ajax({
             url: scriptUrl,
+            method: "GET",
             type: "get",
             dataType: 'html',
             async: false,
@@ -106,6 +126,7 @@ function HeroSelector(Hero) {
                 result = data;
             }
         });
+        document.cookie = "hero=" + Hero;
         $("html").html(result);
     });
 }
@@ -114,24 +135,24 @@ function saveDeck() {
 
         let result = null;
         let scriptUrl = "Decks/Create";
+        let content = [];
         if ($("#cardHolder > .cards").length === 30) {
             for (let i = 0; i < $("#cardHolder > .cards").length; i++) {
-                let content = $("#cardHolder > .cards")[i].getAttribute("data-id");
-                console.log(content);
-                $.post({
-                    url: scriptUrl,
-                    dataType: { CardInfoesId: content },
-                    success: function (data) { result = data; }
-                });
-                console.log(content);
-                console.log(result);
+                content.push($("#cardHolder > .cards")[i].getAttribute("data-id"));
             }
+            $.post({
+                url: scriptUrl,
+                dataType: { CardInfoesId: content },
+                success: function (data) { result = data; }
+            });
+            console.log(result);
         }
         else {
             alert("you need 30 cards in your deck");
         }
     });
 }
+
 
 
 

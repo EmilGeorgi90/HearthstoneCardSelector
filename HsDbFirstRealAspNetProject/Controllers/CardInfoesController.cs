@@ -117,6 +117,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("CardInfoId,CardId,DbId,Name,Type,Text,Class,CardSet,Img")] CardInfo cardInfo)
         {
             if (User.IsInRole("Admin"))
@@ -144,11 +145,19 @@ namespace HsDbFirstRealAspNetProject.Controllers
                                         var file = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", item.Name + ".png");
                                         client.DownloadFile(item.Img, file);
                                         item.Img = item.Name + ".png";
-                                        _context.Add((CardInfo)item);
+                                        CardInfo card = item;
+                                        if (card.AdditionCard != null)
+                                        {
+                                            if (card.AdditionCard.Rarity != null)
+                                            {
+                                                Console.WriteLine(card.AdditionCard.Rarity);
+                                            }
+                                        }
+                                        _context.Add(card);
                                     }
                                     catch (Exception)
                                     {
-                                        
+
                                     }
                                 }
                             }

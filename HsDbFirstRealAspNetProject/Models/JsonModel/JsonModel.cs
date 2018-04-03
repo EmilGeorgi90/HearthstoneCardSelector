@@ -155,6 +155,7 @@ namespace Hearthstone
             AdditionCardInfo ad = new AdditionCardInfo
             {
                 Artist = basic.Artist,
+                Rarity = basic.Rarity
             };
             if (basic.Collectible != null)
             {

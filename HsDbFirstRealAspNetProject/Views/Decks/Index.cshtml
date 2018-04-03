@@ -48,7 +48,7 @@
 <div class="row container-fluid ">
     <div id="currentCardHolder" class="d-flex justify-content-between flex-wrap col-7">
         @{
-            List<string> heroName = new List<string>() { "Malfurion Stormrage", "Rexxar", "Jaina Proudmoore", "Uther Lightbringer", "Anduin Wrynn", "Valeera Sanguinar", "Thrall", "Gul'dan", "Garrosh HellScream" };
+            List<string> heroName = new List<string>() { "Malfurion Stormrage", "Rexxar", "Jaina Proudmoore", "Uther Lightbringer", "Anduin Wrynn", "Valeera Sanguinar", "Thrall", "Gul'dan", "Garrosh Hellscream" };
             <form action="Index" method="get">
                 @foreach (var item in Model)
                 {
@@ -60,7 +60,12 @@
                         }
                         else
                         {
-                            <img class="@item.Name cards" src="~/images/@item.Img" onclick="AddCard(this)" onerror="this.style.display='none'" alt="hsPric" data-Id="@item.CardInfoId" data-rarety="@item.AdditionCard.Rarity" />
+                            string rarity = "";
+                            if (item.AdditionCard != null)
+                            {
+                                rarity = item.AdditionCard.Rarity != null ? item.AdditionCard.Rarity : "";
+                            }
+                            <img class="@item.Name cards" src="~/images/@item.Img" onclick="AddCard(this)" onerror="this.style.display='none'" alt='hsPric' data-Id="@item.CardInfoId" data-Rarety="@rarity" />
                         }
                     }
                 }
