@@ -1,17 +1,12 @@
-﻿using System;
+﻿using HsDbFirstRealAspNetProject.Data;
+using HsDbFirstRealAspNetProject.Models.DbModel;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using HsDbFirstRealAspNetProject.Models;
-using HsDbFirstRealAspNetProject.Models.DbModel;
-using HsDbFirstRealAspNetProject.Data;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using System.Net;
-using Microsoft.AspNetCore.Http.Internal;
 
 namespace HsDbFirstRealAspNetProject.Controllers
 {
@@ -53,7 +48,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
             }
             if (Request.Cookies.ContainsKey("hero"))
             {
-                Response.Cookies.Delete("hero");
+                Response.Cookies.Append("hero", "", new Microsoft.AspNetCore.Http.CookieOptions() { Expires = DateTime.Now.AddDays(-1d) });
             }
             var card = from cardinfo in _context.CardInfo.OrderBy(c => c.Class).ThenBy(c => c.AdditionCard.Cost) join ads in _context.AdditionCardInfo on cardinfo.AdditionCard equals ads select new { card = cardinfo, ad = ads };
             card = card.Where(c => c.card.AdditionCard != null && c.card.CardSet != "Tavern Brawl" && c.card.CardSet != "Missions" && c.card.CardSet != "Hero Skins" && c.card.AdditionCard.Collectible == true);
@@ -70,6 +65,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
                
                 if (string.IsNullOrWhiteSpace(He))
                 {
+                    
                     card = card.Where(c => c.card.Class.Contains(Hero) || c.card.Class.Contains("Neutral"));
                 }
                 else
@@ -135,7 +131,7 @@ namespace HsDbFirstRealAspNetProject.Controllers
 
                 await _context.SaveChangesAsync();
                 var something = from decks in _context.DeckVsCard select decks;
-                RedirectToAction(nameof(Details), (something.Where(c => c.Deck.DeckId == deckVsCards.Deck.DeckId).Single().DeckVsCardsId));
+                RedirectToAction(nameof(Details), something.Where(c => c.Deck.DeckId == deckVsCards.Deck.DeckId).FirstOrDefault().DeckVsCardsId);
                 return View();
             }
             else

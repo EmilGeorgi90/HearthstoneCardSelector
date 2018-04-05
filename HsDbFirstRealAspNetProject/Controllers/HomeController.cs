@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HsDbFirstRealAspNetProject.Models;
 using Microsoft.AspNetCore.Mvc;
-using HsDbFirstRealAspNetProject.Models;
-using System.Reflection;
-using HsDbFirstRealAspNetProject.Models.DbModel;
-using Hearthstone;
+using System.Diagnostics;
 
 namespace HsDbFirstRealAspNetProject.Controllers
 {

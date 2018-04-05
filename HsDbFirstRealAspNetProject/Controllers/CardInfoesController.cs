@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using HsDbFirstRealAspNetProject.Models;
+﻿using HsDbFirstRealAspNetProject.Data;
 using HsDbFirstRealAspNetProject.Models.DbModel;
-using HsDbFirstRealAspNetProject.Data;
-using System.Reflection;
-using unirest_net.http;
-using System.Net;
-using System.IO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Threading.Tasks;
+using unirest_net.http;
 
 namespace HsDbFirstRealAspNetProject.Controllers
 {

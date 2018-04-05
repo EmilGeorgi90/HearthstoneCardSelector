@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using HsDbFirstRealAspNetProject.Models;
+using HsDbFirstRealAspNetProject.Models.AccountViewModels;
+using HsDbFirstRealAspNetProject.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using HsDbFirstRealAspNetProject.Models;
-using HsDbFirstRealAspNetProject.Models.AccountViewModels;
-using HsDbFirstRealAspNetProject.Services;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace HsDbFirstRealAspNetProject.Controllers
 {
